@@ -27,6 +27,7 @@ s consists of English letters, digits, symbols and spaces.
 """
 
 class Solution(object):
+
     def lengthOfLongestSubstring(self, s):
         """
         :type s: str
@@ -43,6 +44,7 @@ class Solution(object):
         return max_len_sub_str
 
 class SolutionBest(object):
+
     def lengthOfLongestSubstring(self, s):
         """
         :type s: str

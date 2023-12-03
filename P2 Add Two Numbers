@@ -119,7 +119,7 @@ class TestSolution(unittest.TestCase):
             self._make_linked_list([8, 9, 9, 9, 0, 0, 0, 1]).get()
         )
 
-    def test_example_emtpy_nums(self):
+    def test_example_emtpy_list(self):
         self.assertEqual(
             self.solution.add_two_numbers(l1=self._make_linked_list([]),
                                           l2=self._make_linked_list([1, 2, 3, 0])).get(),

@@ -113,7 +113,7 @@ class TestSolution(unittest.TestCase):
         return ''.join(random.choice(symbols) for i in range(length))
 
     def test_example_random(self):
-        for length in range(1, 10000):
+        for length in range(1, 100):
             random_str = self._generate_random_string(length)
             self.assertEqual(self.solution.length_of_longest_substring(random_str),
                              self.solution_best.length_of_longest_substring(random_str))

@@ -19,17 +19,25 @@ Input: s = "pwwkew"
 Output: 3
 Explanation: The answer is "wke", with the length of 3.
 Notice that the answer must be a substring, "pwke" is a subsequence and not a substring.
- 
+
 Constraints:
 
-0 <= s.length <= 5 * 104
+0 <= s.length <= 5 * 10**4
 s consists of English letters, digits, symbols and spaces.
 """
 
-class Solution(object):
+import unittest
+import random
+import string
 
-    def lengthOfLongestSubstring(self, s):
+
+class Solution(object):
+    """Solving the "Longest Substring Without Repeating Characters" problem"""
+
+    @staticmethod
+    def length_of_longest_substring(s: str) -> int:
         """
+        Given a string s, find the length of the longest substring without repeating characters.
         :type s: str
         :rtype: int
         """
@@ -43,19 +51,73 @@ class Solution(object):
         max_len_sub_str = max(max_len_sub_str, len(sub_str))
         return max_len_sub_str
 
-class SolutionBest(object):
 
-    def lengthOfLongestSubstring(self, s):
+class SolutionBest(object):
+    """Solving the "Longest Substring Without Repeating Characters" problem"""
+
+    @staticmethod
+    def length_of_longest_substring(s: str) -> int:
         """
+        Given a string s, find the length of the longest substring without repeating characters.
         :type s: str
         :rtype: int
         """
-        map = {}
+        letter_dict = {}
         start_index = 0
         max_len = 0
         for i, letter in enumerate(s):
-            if letter in map:
-                start_index = max(map[letter] + 1, start_index)
+            if letter in letter_dict:
+                start_index = max(letter_dict[letter] + 1, start_index)
             max_len = max(max_len, i - start_index + 1)
-            map[letter] = i
+            letter_dict[letter] = i
         return max_len
+
+
+class TestSolution(unittest.TestCase):
+    """Test solving the "Longest Substring Without Repeating Characters"""
+
+    def setUp(self):
+        self.solution = Solution()
+        self.solution_best = SolutionBest()
+
+    def test_example_1(self):
+        self.assertEqual(self.solution.length_of_longest_substring('abcabcbb'), 3)
+        self.assertEqual(self.solution_best.length_of_longest_substring('abcabcbb'), 3)
+
+    def test_example_2(self):
+        self.assertEqual(self.solution.length_of_longest_substring('bbbbb'), 1)
+        self.assertEqual(self.solution_best.length_of_longest_substring('bbbbb'), 1)
+
+    def test_example_3(self):
+        self.assertEqual(self.solution.length_of_longest_substring('pwwkew'), 3)
+        self.assertEqual(self.solution_best.length_of_longest_substring('pwwkew'), 3)
+
+    def test_example_4(self):
+        self.assertEqual(self.solution.length_of_longest_substring('abba'), 2)
+        self.assertEqual(self.solution_best.length_of_longest_substring('abba'), 2)
+
+    def test_example_5(self):
+        self.assertEqual(self.solution.length_of_longest_substring('a'), 1)
+        self.assertEqual(self.solution_best.length_of_longest_substring('a'), 1)
+
+    def test_example_emtpy_str(self):
+        self.assertEqual(self.solution.length_of_longest_substring(''), 0)
+        self.assertEqual(self.solution_best.length_of_longest_substring(''), 0)
+
+    @staticmethod
+    def _generate_random_string(length: int) -> str:
+        # 1 <= s.length <= 5 * 10**4
+        length = random.randint(1, 5 * 10**4)
+        # s consists of English letters, digits, symbols and spaces.
+        symbols = string.ascii_lowercase + string.digits + string.punctuation + string.whitespace
+        return ''.join(random.choice(symbols) for i in range(length))
+
+    def test_example_random(self):
+        for length in range(1, 10000):
+            random_str = self._generate_random_string(length)
+            self.assertEqual(self.solution.length_of_longest_substring(random_str),
+                             self.solution_best.length_of_longest_substring(random_str))
+
+
+if __name__ == "__main__":
+    unittest.main()

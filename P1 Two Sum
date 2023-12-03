@@ -29,10 +29,19 @@ Only one valid answer exists.
 Follow-up: Can you come up with an algorithm that is less than O(n2) time complexity?
 """
 
-class Solution(object):
+from typing import List
+import unittest
+import random
 
-    def twoSum(self, nums, target):
+
+class Solution(object):
+    """Solving the "Two Sum" problem"""
+
+    @staticmethod
+    def two_sum(nums: List[int], target: int) -> List[int] | None:
         """
+        Given an array of integers nums and an integer target,
+        return indices of the two numbers such that they add up to target.
         :type nums: List[int]
         :type target: int
         :rtype: List[int]
@@ -40,5 +49,43 @@ class Solution(object):
         deltas_dict = {}
         for i, num in enumerate(nums):
             if num in deltas_dict:
-                return deltas_dict[num], i
+                # You may assume that each input would have exactly one solution
+                return [deltas_dict[num], i]
+            # You may not use the same element twice
             deltas_dict[target - num] = i
+
+
+class TestSolution(unittest.TestCase):
+    """Test solving the "Two Sum" problem"""
+
+    def setUp(self):
+        self.solution = Solution()
+
+    def test_example_1(self):
+        self.assertEqual(self.solution.two_sum(nums=[2, 7, 11, 15], target=9), [0, 1])
+
+    def test_example_2(self):
+        self.assertEqual(self.solution.two_sum(nums=[3, 2, 4], target=6), [1, 2])
+
+    def test_example_3(self):
+        self.assertEqual(self.solution.two_sum(nums=[3, 3], target=6), [0, 1])
+
+    def test_example_emtpy_nums(self):
+        self.assertEqual(self.solution.two_sum(nums=[], target=10), None)
+
+    def test_example_random(self):
+        for i in range(104):
+            nums = random.sample(range(-109, 110), k=i)
+            target = random.randint(-109, 109)
+            num1 = random.randint(-109, 109)
+            num2 = target - num1
+            if num1 not in nums:
+                nums.append(num1)
+            if num2 not in nums:
+                nums.append(num2)
+            solution = self.solution.two_sum(nums=nums, target=target)
+            self.assertEqual(nums[solution[0]] + nums[solution[1]], target)
+
+
+if __name__ == "__main__":
+    unittest.main()

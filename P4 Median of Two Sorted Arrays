@@ -115,9 +115,9 @@ class SolutionBinarySearchRecursive(object):
         :return:
         """
         if a_start > a_end:
-            return self.nums2[b_start]
+            return self.nums2[k - a_start]
         if b_start > b_end:
-            return self.nums1[a_start]
+            return self.nums1[k - b_start]
 
         a_index = (a_start + a_end) // 2
         a_value = self.nums1[a_index]

@@ -13,7 +13,7 @@ Example 2:
 Input: nums1 = [1,2], nums2 = [3,4]
 Output: 2.50000
 Explanation: merged array = [1,2,3,4] and median is (2 + 3) / 2 = 2.5.
- 
+
 Constraints:
 
 nums1.length == m
@@ -24,16 +24,29 @@ nums2.length == n
 -106 <= nums1[i], nums2[i] <= 106
 """
 
+from typing import List
 
-class Solution(object):
-    def findMedianSortedArrays(self, nums1, nums2):
+
+class SolutionMergeSort(object):
+    """Merge sort is one of the most efficient sorting algorithms"""
+
+    def __init__(self, nums1: List[int], nums2: List[int]):
         """
+        Initialization
         :type nums1: List[int]
         :type nums2: List[int]
         :rtype: float
         """
-        len1 = len(nums1)
-        len2 = len(nums2)
+        self.nums1 = nums1
+        self.nums2 = nums2
+
+    def find_median_sorted_arrays(self) -> float | None:
+        """
+        Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays
+        :rtype: float
+        """
+        len1 = len(self.nums1)
+        len2 = len(self.nums2)
         len_total = len1 + len2
         if not len_total:
             return None
@@ -50,8 +63,8 @@ class Solution(object):
         num_t_2 = None
 
         for i in range(index_2 + 1):
-            num1 = nums1[ind1] if ind1 < len1 else None
-            num2 = nums2[ind2] if ind2 < len2 else None
+            num1 = self.nums1[ind1] if ind1 < len1 else None
+            num2 = self.nums2[ind2] if ind2 < len2 else None
 
             if num1 is not None and num2 is not None:
                 if num1 <= num2:
@@ -72,4 +85,69 @@ class Solution(object):
             if i == index_2:
                 num_t_2 = num_i
 
-        return (num_t_1 + num_t_2) / 2.0
+        return (num_t_1 + num_t_2) / float(2)
+
+
+class SolutionBinarySearchRecursive(object):
+    """
+    Binary Search is defined as a searching algorithm used in a sorted array by repeatedly dividing the search
+    interval in half
+    """
+
+    def __init__(self, nums1: List[int], nums2: List[int]):
+        """
+        Initialization
+        :type nums1: List[int]
+        :type nums2: List[int]
+        :rtype: float
+        """
+        self.nums1 = nums1
+        self.nums2 = nums2
+
+    def get_the_middle_values(self, k: int, a_start: int, a_end: int, b_start: int, b_end: int) -> float:
+        """
+        Get the middle values of the two ranges
+        :param k:
+        :param a_start:
+        :param a_end:
+        :param b_start:
+        :param b_end:
+        :return:
+        """
+        if a_start > a_end:
+            return self.nums2[k - a_start]
+        if b_start > b_end:
+            return self.nums1[k - b_start]
+
+        a_index = (a_start + a_end) // 2
+        a_value = self.nums1[a_index]
+        b_index = (b_start + b_end) // 2
+        b_value = self.nums2[b_index]
+
+        if a_index + b_index < k:
+            if a_value > b_value:
+                return self.get_the_middle_values(k, a_start, a_end, b_index + 1, b_end)
+            else:
+                return self.get_the_middle_values(k, a_index + 1, a_end, b_start, b_end)
+        else:
+            if a_value > b_value:
+                return self.get_the_middle_values(k, a_start, a_index - 1, b_start, b_end)
+            else:
+                return self.get_the_middle_values(k, a_start, a_end, b_start, b_index - 1)
+
+    def find_median_sorted_arrays(self) -> float | None:
+        """
+        Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays
+        :rtype: float
+        """
+        len1 = len(self.nums1)
+        len2 = len(self.nums2)
+        len_total = len1 + len2
+        if not len_total:
+            return None
+
+        index = len_total // 2
+        num = self.get_the_middle_values(index, 0, len1 - 1, 0, len2 - 1)
+        if not len_total % 2:
+            num = (num + self.get_the_middle_values(index - 1, 0, len1 - 1, 0, len2 - 1)) / 2.0
+        return num

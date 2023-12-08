@@ -35,7 +35,11 @@ import random
 
 
 class Solution(object):
-    """Solving the "Two Sum" problem"""
+    """
+    Solving the "Two Sum" problem
+    Time complexity: O(n)
+    Space complexity: O(n)
+    """
 
     @staticmethod
     def two_sum(nums: List[int], target: int) -> List[int] | None:

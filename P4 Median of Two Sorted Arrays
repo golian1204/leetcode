@@ -24,11 +24,17 @@ nums2.length == n
 -106 <= nums1[i], nums2[i] <= 106
 """
 
+import random
+import unittest
 from typing import List
 
 
 class SolutionMergeSort(object):
-    """Merge sort is one of the most efficient sorting algorithms"""
+    """
+    Solving the "Median of Two Sorted Arrays" problem
+    Time complexity: O(m+n)
+    Space complexity: O(1)
+    """
 
     def __init__(self, nums1: List[int], nums2: List[int]):
         """
@@ -42,6 +48,7 @@ class SolutionMergeSort(object):
 
     def find_median_sorted_arrays(self) -> float | None:
         """
+        Merge sort is one of the most efficient sorting algorithms
         Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays
         :rtype: float
         """
@@ -90,8 +97,9 @@ class SolutionMergeSort(object):
 
 class SolutionBinarySearchRecursive(object):
     """
-    Binary Search is defined as a searching algorithm used in a sorted array by repeatedly dividing the search
-    interval in half
+    Solving the "Median of Two Sorted Arrays" problem
+    Time complexity: O(log m + log n) = O(log(m⋅n))
+    Space complexity: O(log m + log n)
     """
 
     def __init__(self, nums1: List[int], nums2: List[int]):
@@ -138,6 +146,8 @@ class SolutionBinarySearchRecursive(object):
     def find_median_sorted_arrays(self) -> float | None:
         """
         Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays
+        Binary Search is defined as a searching algorithm used in a sorted array by repeatedly dividing the search
+        interval in half
         :rtype: float
         """
         len1 = len(self.nums1)
@@ -151,3 +161,112 @@ class SolutionBinarySearchRecursive(object):
         if not len_total % 2:
             num = (num + self.get_the_middle_values(index - 1, 0, len1 - 1, 0, len2 - 1)) / 2.0
         return num
+
+
+class SolutionBinarySearchRecursiveBetter(object):
+    """
+    Solving the "Median of Two Sorted Arrays" problem
+    Time complexity: O(log(min(m,n)))
+    Space complexity: O(1)
+    """
+
+    def __init__(self, nums1: List[int], nums2: List[int]):
+        """
+        Initialization
+        :type nums1: List[int]
+        :type nums2: List[int]
+        :rtype: float
+        """
+        if len(nums1) <= len(nums2):
+            self.smaller_nums = nums1
+            self.larger_nums = nums2
+        else:
+            self.smaller_nums = nums2
+            self.larger_nums = nums1
+
+    def find_median_sorted_arrays(self) -> float | None:
+        """
+        Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays
+        We need to find a point of partition in both arrays such that the maximum of the smaller half is less than or
+        equal to the minimum of the larger half
+        :return:
+        """
+        small_nums_len = len(self.smaller_nums)
+        big_nums_len = len(self.larger_nums)
+
+        len_total = small_nums_len + big_nums_len
+        if not len_total:
+            return None
+        median_total = (len_total + 1) // 2
+
+        start_border = 0
+        end_border = small_nums_len
+
+        while start_border <= end_border:
+            median_1 = (start_border + end_border) // 2
+            median_2 = median_total - median_1
+
+            end_left_part_small_nums = float('-inf') if median_1 == 0 else self.smaller_nums[median_1 - 1]
+            start_right_part_small_nums = float('inf') if median_1 == small_nums_len else self.smaller_nums[median_1]
+            end_left_part_big_nums = float('-inf') if median_2 == 0 else self.larger_nums[median_2 - 1]
+            start_right_part_big_nums = float('inf') if median_2 == big_nums_len else self.larger_nums[median_2]
+
+            if end_left_part_small_nums <= start_right_part_big_nums and \
+                    end_left_part_big_nums <= start_right_part_small_nums:
+                num = max(end_left_part_small_nums, end_left_part_big_nums)
+                if not len_total % 2:
+                    num = (num + min(start_right_part_small_nums, start_right_part_big_nums)) / 2.0
+                return num
+            elif end_left_part_small_nums > start_right_part_big_nums:
+                end_border = median_1 - 1
+            else:
+                start_border = median_1 + 1
+
+
+class TestSolution(unittest.TestCase):
+    """Test solving the "Median of Two Sorted Arrays" problem"""
+
+    def setUp(self):
+        self.solution_merge_sort = SolutionMergeSort
+        self.solution_binary_search_recursive = SolutionBinarySearchRecursive
+        self.solution_binary_search_recursive_better = SolutionBinarySearchRecursiveBetter
+
+    def _run(self, nums1: List[int], nums2: List[int], output: float | None):
+        self.assertEqual(self.solution_merge_sort(nums1, nums2).find_median_sorted_arrays(), output)
+        self.assertEqual(self.solution_binary_search_recursive(nums1, nums2).find_median_sorted_arrays(), output)
+        self.assertEqual(self.solution_binary_search_recursive_better(nums1, nums2).find_median_sorted_arrays(), output)
+
+    def test_example_1(self):
+        self._run([1, 3], [2], 2.0)
+
+    def test_example_2(self):
+        self._run([1, 2], [3, 4], 2.5)
+
+    def test_example_3(self):
+        self._run([-1, 0, 0, 0, 0, 0, 1], [0, 0, 0, 0], 0)
+
+    def test_example_4(self):
+        self._run([4], [8], 6.0)
+
+    def test_example_5(self):
+        self._run([4, 4, 5, 6], [], 4.5)
+
+    def test_example_emtpy(self):
+        self._run([], [], None)
+
+    def test_example_random(self):
+        for i in range(1000):
+            random_list = (lambda: [random.randint(-106, 106) for _ in range(random.randint(0, i))])
+            nums1 = random_list()
+            nums1.sort()
+            nums2 = random_list()
+            nums2.sort()
+            solve_merge_sort = self.solution_merge_sort(nums1, nums2).find_median_sorted_arrays()
+            solve_binary_search_recursive = self.solution_binary_search_recursive(nums1, nums2).find_median_sorted_arrays()
+            solve_binary_search_recursive_better = self.solution_binary_search_recursive_better(nums1, nums2).find_median_sorted_arrays()
+            self.assertEqual(solve_merge_sort, solve_binary_search_recursive)
+            self.assertEqual(solve_merge_sort, solve_binary_search_recursive_better)
+
+
+if __name__ == "__main__":
+    unittest.main()

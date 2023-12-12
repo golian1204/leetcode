@@ -1,0 +1,33 @@
+class Solution(object):
+    def longestPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        max_len_palindrome = 0
+        start_palindrome = None
+        end_palindrome = None
+
+        # {a: {1: 0, 2: 3}, b: {1: 1, 2: 2}, c: {1: 4}}
+        letters_dict = {}
+        # {a: 2, b: 2, c: 1}
+        letters_count_dict = {}
+        # {(1,2): 2, (0,3): 4}
+        palindromes_dict = {}
+        for i, letter in enumerate(s):
+            letter_info = letters_dict.setdefault(letter, {})
+            letter_count = letters_count_dict.setdefault(letter, 0) + 1
+            if letter_info:
+                for j in range(1, letter_count):
+                    pre_i = letters_dict[letter][j]
+                    if (i - pre_i == 2) or (i - 1 == pre_i) or palindromes_dict.get((pre_i + 1, i - 1)):
+                        len_palindrome = i - pre_i + 1
+                        if len_palindrome > max_len_palindrome:
+                            max_len_palindrome = len_palindrome
+                            start_palindrome = pre_i
+                            end_palindrome = i
+                        palindromes_dict[(pre_i, i)] = len_palindrome
+            letter_info[letter_count] = i
+            letters_count_dict[letter] = letter_count
+
+        return s[start_palindrome:end_palindrome + 1] if max_len_palindrome else s[0] if s else ''
